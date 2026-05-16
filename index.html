@@ -245,7 +245,10 @@ select.input-field{-webkit-appearance:none;}
       <option>Durango, Dgo.</option><option>Otro</option>
     </select>
     <input class="input-field" id="nc-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
-    <input class="input-field" id="nc-dir" placeholder="Dirección (opcional)">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="input-field" id="nc-dir" placeholder="Dirección (opcional)" style="margin-bottom:0;flex:1">
+      <button type="button" class="btn-sm blue" style="white-space:nowrap;padding:13px 12px" onclick="geoFill('nc-dir')">📍</button>
+    </div>
     <textarea class="input-field" id="nc-notas" placeholder="Notas fijas del cliente..." style="min-height:70px;resize:none"></textarea>
     <button class="btn-primary" onclick="saveNewClient()">Guardar cliente</button>
   </div>
@@ -275,7 +278,10 @@ select.input-field{-webkit-appearance:none;}
       <option>Durango, Dgo.</option><option>Otro</option>
     </select>
     <input class="input-field" id="ec-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
-    <input class="input-field" id="ec-dir" placeholder="Dirección (opcional)">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="input-field" id="ec-dir" placeholder="Dirección (opcional)" style="margin-bottom:0;flex:1">
+      <button type="button" class="btn-sm blue" style="white-space:nowrap;padding:13px 12px" onclick="geoFill('ec-dir')">📍</button>
+    </div>
     <textarea class="input-field" id="ec-notas" placeholder="Notas fijas del cliente..." style="min-height:70px;resize:none"></textarea>
     <button class="btn-primary" onclick="saveEditClient()">Guardar cambios</button>
     <button class="btn-primary danger" style="margin-top:12px" onclick="askDeleteClientEdit()">🗑 Eliminar cliente</button>
@@ -293,6 +299,20 @@ select.input-field{-webkit-appearance:none;}
     <input class="input-field" id="np-emoji" placeholder="Emoji (ej: 🔧, 🚿, 📏)">
     <input class="input-field" id="np-precio" placeholder="Precio de venta ($0 si varía)" type="number" step="0.01">
     <button class="btn-primary" onclick="saveNewProduct()">Guardar producto</button>
+  </div>
+</div>
+
+<!-- MODAL EDIT PRODUCT -->
+<div class="modal-overlay" id="modal-edit-product" onclick="closeModal('modal-edit-product',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Editar Producto</div>
+    <input class="input-field" id="ep-nombre" placeholder="Nombre del producto *">
+    <input class="input-field" id="ep-sub" placeholder="Descripción corta (tamaño, material...)">
+    <input class="input-field" id="ep-sku" placeholder="SKU / Código (opcional)">
+    <input class="input-field" id="ep-emoji" placeholder="Emoji (ej: 🔧, 🚿, 📏)">
+    <input class="input-field" id="ep-precio" placeholder="Precio de venta ($0 si varía)" type="number" step="0.01">
+    <button class="btn-primary" onclick="saveEditProduct()">Guardar cambios</button>
   </div>
 </div>
 
@@ -361,6 +381,8 @@ const DEFAULT_CLIENTS = [
   {id:'c25',name:'Ferretería Coronado',contact:'Sr. Coronado',tel:'6188110372',tipo:'Ferretería',territorio:'Durango, Dgo.',dir:'',notas:''},
   // Francisco I. Madero, Dgo.
   {id:'c26',name:'Ferretería Olvera',contact:'Sr. Olvera',tel:'6778830865',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
+  {id:'c27',name:'Ferremateriales',contact:'Rafael',tel:'6778830416',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
+  {id:'c28',name:'Ferretería González',contact:'Nuvia',tel:'6771083714',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
 ];
 
 const TERR_COLORS = {
@@ -410,6 +432,31 @@ function fmtDate(d){const dy=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],mo=['
 function fmtDateTime(ts){const d=new Date(ts);return `${fmtDate(d)} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
 function getTerrColor(t){if(TERR_COLORS[t])return TERR_COLORS[t];let hash=0;for(let i=0;i<t.length;i++){hash=t.charCodeAt(i)+((hash<<5)-hash);}const hue=Math.abs(hash)%360;return `hsl(${hue},60%,55%)`;}
 
+function geoFill(inputId){
+  const inp=document.getElementById(inputId);
+  if(!navigator.geolocation){showToast('GPS no disponible','red');return;}
+  inp.placeholder='Obteniendo ubicación...';
+  navigator.geolocation.getCurrentPosition(
+    async pos=>{
+      const {latitude:lat,longitude:lon}=pos.coords;
+      try{
+        const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=es`);
+        const d=await r.json();
+        const addr=d.address||{};
+        const parts=[addr.road||addr.pedestrian||'',addr.house_number||'',addr.city||addr.town||addr.village||addr.municipality||'',addr.state||''].filter(Boolean);
+        inp.value=parts.join(', ');
+        inp.placeholder='Dirección (opcional)';
+        showToast('📍 Ubicación capturada');
+      }catch(e){
+        inp.value=`${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+        inp.placeholder='Dirección (opcional)';
+        showToast('📍 Coordenadas guardadas');
+      }
+    },
+    err=>{inp.placeholder='Dirección (opcional)';showToast('No se pudo obtener GPS','red');}
+  );
+}
+
 function renderClients(filter=''){
   document.getElementById('hdr-date').textContent=fmtDate(new Date());
   const f=filter.toLowerCase();
@@ -427,7 +474,7 @@ function renderClients(filter=''){
       html+=`<div class="client-card" onclick="openVenta('${c.id}')">
         <div class="client-avatar" style="background:linear-gradient(135deg,${color},${color}88)">${TYPE_EMOJI[c.tipo]||'🏢'}</div>
         <div class="client-info">
-          <div class="client-name">${c.name}</div>
+          <div class="client-name">${c.name}${c.dir?' <span style="font-size:11px">📍</span>':''}</div>
           <div class="client-meta"><span class="tag ${TYPE_TAGS[c.tipo]||'tag-ferreteria'}">${c.tipo||'Otro'}</span>${c.contact?' · '+c.contact:''}</div>
           <div class="client-meta" style="margin-top:3px">${lastStr}</div>
         </div>
@@ -625,10 +672,37 @@ function renderAdmin(){
   document.getElementById('admin-products-list').innerHTML=products.map(p=>`<div class="prod-admin-card">
     <div style="font-size:28px">${p.emoji||'📦'}</div>
     <div class="prod-admin-info"><div class="prod-admin-name">${p.name}</div><div class="prod-admin-sub">${p.sub||''}${p.sku?' · '+p.sku:''}</div><div class="prod-admin-price">$${p.price>0?p.price.toFixed(2):'Precio variable'}</div></div>
-    <button class="btn-sm red" onclick="askDeleteProduct('${p.id}')">🗑</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm blue" onclick="openEditProduct('${p.id}')">✏️</button>
+      <button class="btn-sm red" onclick="askDeleteProduct('${p.id}')">🗑</button>
+    </div>
   </div>`).join('')||'<div style="color:var(--text3);font-size:14px;padding:20px 0">Sin productos</div>';
 }
 
+function openEditProduct(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  document.getElementById('ep-nombre').value=p.name;
+  document.getElementById('ep-sub').value=p.sub||'';
+  document.getElementById('ep-sku').value=p.sku||'';
+  document.getElementById('ep-emoji').value=p.emoji||'';
+  document.getElementById('ep-precio').value=p.price||0;
+  document.getElementById('modal-edit-product').dataset.editId=id;
+  document.getElementById('modal-edit-product').classList.add('open');
+}
+function saveEditProduct(){
+  const id=document.getElementById('modal-edit-product').dataset.editId;
+  const name=document.getElementById('ep-nombre').value.trim();
+  if(!name){showToast('⚠ Escribe el nombre');return;}
+  const idx=products.findIndex(x=>x.id===id);if(idx===-1)return;
+  products[idx]={...products[idx],
+    name,
+    sub:document.getElementById('ep-sub').value.trim(),
+    sku:document.getElementById('ep-sku').value.trim(),
+    emoji:document.getElementById('ep-emoji').value.trim()||'📦',
+    price:parseFloat(document.getElementById('ep-precio').value)||0,
+  };
+  save();closeModal('modal-edit-product');showToast('✓ Producto actualizado');renderAdmin();
+}
 function openAddProduct(){['np-nombre','np-sub','np-sku','np-emoji','np-precio'].forEach(id=>document.getElementById(id).value='');document.getElementById('modal-add-product').classList.add('open');}
 function saveNewProduct(){
   const name=document.getElementById('np-nombre').value.trim();
