@@ -58,6 +58,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .notes-ta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:14px;resize:none;outline:none;min-height:90px;}
 .notes-ta:focus{border-color:var(--accent);}
 .notes-ta::placeholder{color:var(--text3);}
+/* FIX 3: No compró / rechazo */
+.rechazo-row{background:var(--surface);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.rechazo-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:all 0.15s;}
+.rechazo-check.checked{background:rgba(239,68,68,0.2);border-color:#ef4444;}
+.rechazo-label{font-size:13px;font-weight:500;flex:1;}
+.rechazo-reason{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;margin-top:8px;resize:none;}
+.rechazo-reason::placeholder{color:var(--text3);}
+.rechazo-reason:focus{border-color:#ef4444;}
+/* FIX 4: Ruta calendar badge */
+.ruta-badge{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--accent2);}
+/* FIX: precio variable pill */
+.precio-variable-pill{background:rgba(245,158,11,0.15);color:#fbbf24;border-radius:20px;font-size:10px;font-weight:700;padding:2px 7px;display:inline-block;margin-left:4px;}
 .bottom-btn-wrap{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 28px;background:linear-gradient(to top,var(--bg) 70%,transparent);}
 .btn-primary{width:100%;background:var(--accent);border:none;border-radius:var(--radius);color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;padding:16px;cursor:pointer;transition:all 0.15s;}
 .btn-primary:active{transform:scale(0.97);}
@@ -77,6 +89,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .hist-date{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;}
 .hist-total{font-size:16px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace;}
 .hist-products{font-size:12px;color:var(--text2);line-height:1.6;}
+.hist-rechazos{font-size:12px;color:#f87171;line-height:1.6;margin-top:4px;}
 .prod-admin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
 .prod-admin-info{flex:1;min-width:0;}
 .prod-admin-name{font-size:14px;font-weight:600;}
@@ -115,6 +128,10 @@ select.input-field{-webkit-appearance:none;}
 .confirm-btns button{flex:1;padding:13px;border-radius:12px;border:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
 .confirm-cancel{background:var(--surface2);color:var(--text);}
 .confirm-delete{background:var(--danger);color:white;}
+/* FIX 4: Ruta calendar chips */
+.ruta-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--accent2);margin:3px 3px 3px 0;cursor:pointer;}
+.ruta-chip.active-day{background:rgba(16,185,129,0.25);border-color:var(--accent2);}
+.ruta-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -137,6 +154,7 @@ select.input-field{-webkit-appearance:none;}
     <button class="nav-tab active" onclick="showTab('home')"><span class="nav-tab-icon">👥</span>Clientes</button>
     <button class="nav-tab" onclick="showTab('historial')"><span class="nav-tab-icon">📋</span>Historial</button>
     <button class="nav-tab" onclick="showTab('resumen')"><span class="nav-tab-icon">📊</span>Resumen</button>
+    <button class="nav-tab" onclick="showTab('ruta')"><span class="nav-tab-icon">🗓</span>Ruta</button>
     <button class="nav-tab" onclick="showTab('admin')"><span class="nav-tab-icon">⚙️</span>Admin</button>
   </div>
 </div>
@@ -144,13 +162,14 @@ select.input-field{-webkit-appearance:none;}
 <!-- HISTORIAL -->
 <div class="screen" id="screen-historial">
   <div class="hdr">
-    <div style="flex:1"><div class="hdr-title">Historial de Ventas</div><div class="hdr-sub" id="hist-count-label"></div></div>
+    <div style="flex:1"><div class="hdr-title">Historial de Visitas</div><div class="hdr-sub" id="hist-count-label"></div></div>
   </div>
   <div class="scroll-body" id="historial-list"></div>
   <div class="nav-tabs">
     <button class="nav-tab" onclick="showTab('home')"><span class="nav-tab-icon">👥</span>Clientes</button>
     <button class="nav-tab active" onclick="showTab('historial')"><span class="nav-tab-icon">📋</span>Historial</button>
     <button class="nav-tab" onclick="showTab('resumen')"><span class="nav-tab-icon">📊</span>Resumen</button>
+    <button class="nav-tab" onclick="showTab('ruta')"><span class="nav-tab-icon">🗓</span>Ruta</button>
     <button class="nav-tab" onclick="showTab('admin')"><span class="nav-tab-icon">⚙️</span>Admin</button>
   </div>
 </div>
@@ -165,6 +184,22 @@ select.input-field{-webkit-appearance:none;}
     <button class="nav-tab" onclick="showTab('home')"><span class="nav-tab-icon">👥</span>Clientes</button>
     <button class="nav-tab" onclick="showTab('historial')"><span class="nav-tab-icon">📋</span>Historial</button>
     <button class="nav-tab active" onclick="showTab('resumen')"><span class="nav-tab-icon">📊</span>Resumen</button>
+    <button class="nav-tab" onclick="showTab('ruta')"><span class="nav-tab-icon">🗓</span>Ruta</button>
+    <button class="nav-tab" onclick="showTab('admin')"><span class="nav-tab-icon">⚙️</span>Admin</button>
+  </div>
+</div>
+
+<!-- RUTA (FIX 4) -->
+<div class="screen" id="screen-ruta">
+  <div class="hdr">
+    <div style="flex:1"><div class="hdr-title">Calendario de Ruta</div><div class="hdr-sub">Clientes por día de visita</div></div>
+  </div>
+  <div class="scroll-body" id="ruta-body"></div>
+  <div class="nav-tabs">
+    <button class="nav-tab" onclick="showTab('home')"><span class="nav-tab-icon">👥</span>Clientes</button>
+    <button class="nav-tab" onclick="showTab('historial')"><span class="nav-tab-icon">📋</span>Historial</button>
+    <button class="nav-tab" onclick="showTab('resumen')"><span class="nav-tab-icon">📊</span>Resumen</button>
+    <button class="nav-tab active" onclick="showTab('ruta')"><span class="nav-tab-icon">🗓</span>Ruta</button>
     <button class="nav-tab" onclick="showTab('admin')"><span class="nav-tab-icon">⚙️</span>Admin</button>
   </div>
 </div>
@@ -183,6 +218,7 @@ select.input-field{-webkit-appearance:none;}
     <button class="nav-tab" onclick="showTab('home')"><span class="nav-tab-icon">👥</span>Clientes</button>
     <button class="nav-tab" onclick="showTab('historial')"><span class="nav-tab-icon">📋</span>Historial</button>
     <button class="nav-tab" onclick="showTab('resumen')"><span class="nav-tab-icon">📊</span>Resumen</button>
+    <button class="nav-tab" onclick="showTab('ruta')"><span class="nav-tab-icon">🗓</span>Ruta</button>
     <button class="nav-tab active" onclick="showTab('admin')"><span class="nav-tab-icon">⚙️</span>Admin</button>
   </div>
 </div>
@@ -199,13 +235,18 @@ select.input-field{-webkit-appearance:none;}
     <div id="client-notes-area"></div>
     <div class="section-label">Productos — toca precio para editarlo</div>
     <div id="products-list"></div>
+    <!-- FIX 3: Sección de rechazos -->
+    <div style="margin-top:20px">
+      <div style="font-size:12px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">❌ No compró / No había interés</div>
+      <div id="rechazos-list"></div>
+    </div>
     <div style="margin-top:20px">
       <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">💬 Notas del cliente</div>
       <textarea class="notes-ta" id="venta-notes" placeholder="Ej: Le gustó el cortinero grande. Preguntó por cubetas..."></textarea>
     </div>
   </div>
   <div class="bottom-btn-wrap">
-    <button class="btn-primary green" id="btn-guardar" onclick="guardarVenta()" disabled>Guardar venta</button>
+    <button class="btn-primary green" id="btn-guardar" onclick="guardarVenta()">Guardar visita</button>
   </div>
 </div>
 
@@ -213,7 +254,7 @@ select.input-field{-webkit-appearance:none;}
 <div class="screen" id="screen-summary">
   <div class="hdr">
     <button class="hdr-back" onclick="showScreen('screen-venta')">←</button>
-    <div style="flex:1"><div class="hdr-title">Confirmar Venta</div></div>
+    <div style="flex:1"><div class="hdr-title">Confirmar Visita</div></div>
   </div>
   <div class="scroll-body"><div id="summary-content"></div></div>
   <div class="bottom-btn-wrap">
@@ -241,8 +282,11 @@ select.input-field{-webkit-appearance:none;}
       <option>Monte Escobedo, Zac.</option><option>Mezquitic, Jal.</option>
       <option>Huejuquilla el Alto, Jal.</option><option>Valparaíso, Zac.</option>
       <option>Fresnillo, Zac.</option><option>Aguascalientes, Ags.</option>
-      <option>Sombrerete, Zac.</option><option>Vicente Guerrero, Dgo.</option>
-      <option>Durango, Dgo.</option><option>Otro</option>
+      <option>Sombrerete, Zac.</option><option>Villanueva, Zac.</option>
+      <option>Tabasco, Zac.</option><option>Vicente Guerrero, Dgo.</option>
+      <option>Nombre de Dios, Dgo.</option><option>Guadalupe Victoria, Dgo.</option>
+      <option>Antonio Amaro, Dgo.</option><option>Villa Unión, Dgo.</option>
+      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option><option>Otro</option>
     </select>
     <input class="input-field" id="nc-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -250,6 +294,16 @@ select.input-field{-webkit-appearance:none;}
       <button type="button" class="btn-sm blue" style="white-space:nowrap;padding:13px 12px" onclick="geoFill('nc-dir')">📍</button>
     </div>
     <textarea class="input-field" id="nc-notas" placeholder="Notas fijas del cliente..." style="min-height:70px;resize:none"></textarea>
+    <!-- FIX 4: Días de ruta al agregar cliente -->
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px">📅 Días de visita en ruta</div>
+    <div id="nc-dias-ruta" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+      <div class="ruta-chip" id="nc-dia-lun" onclick="toggleDiaRuta('nc','lun')">Lun</div>
+      <div class="ruta-chip" id="nc-dia-mar" onclick="toggleDiaRuta('nc','mar')">Mar</div>
+      <div class="ruta-chip" id="nc-dia-mie" onclick="toggleDiaRuta('nc','mie')">Mié</div>
+      <div class="ruta-chip" id="nc-dia-jue" onclick="toggleDiaRuta('nc','jue')">Jue</div>
+      <div class="ruta-chip" id="nc-dia-vie" onclick="toggleDiaRuta('nc','vie')">Vie</div>
+      <div class="ruta-chip" id="nc-dia-sab" onclick="toggleDiaRuta('nc','sab')">Sáb</div>
+    </div>
     <button class="btn-primary" onclick="saveNewClient()">Guardar cliente</button>
   </div>
 </div>
@@ -274,8 +328,11 @@ select.input-field{-webkit-appearance:none;}
       <option>Monte Escobedo, Zac.</option><option>Mezquitic, Jal.</option>
       <option>Huejuquilla el Alto, Jal.</option><option>Valparaíso, Zac.</option>
       <option>Fresnillo, Zac.</option><option>Aguascalientes, Ags.</option>
-      <option>Sombrerete, Zac.</option><option>Vicente Guerrero, Dgo.</option>
-      <option>Durango, Dgo.</option><option>Otro</option>
+      <option>Sombrerete, Zac.</option><option>Villanueva, Zac.</option>
+      <option>Tabasco, Zac.</option><option>Vicente Guerrero, Dgo.</option>
+      <option>Nombre de Dios, Dgo.</option><option>Guadalupe Victoria, Dgo.</option>
+      <option>Antonio Amaro, Dgo.</option><option>Villa Unión, Dgo.</option>
+      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option><option>Otro</option>
     </select>
     <input class="input-field" id="ec-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -283,6 +340,16 @@ select.input-field{-webkit-appearance:none;}
       <button type="button" class="btn-sm blue" style="white-space:nowrap;padding:13px 12px" onclick="geoFill('ec-dir')">📍</button>
     </div>
     <textarea class="input-field" id="ec-notas" placeholder="Notas fijas del cliente..." style="min-height:70px;resize:none"></textarea>
+    <!-- FIX 4: Días de ruta al editar -->
+    <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px">📅 Días de visita en ruta</div>
+    <div id="ec-dias-ruta" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+      <div class="ruta-chip" id="ec-dia-lun" onclick="toggleDiaRuta('ec','lun')">Lun</div>
+      <div class="ruta-chip" id="ec-dia-mar" onclick="toggleDiaRuta('ec','mar')">Mar</div>
+      <div class="ruta-chip" id="ec-dia-mie" onclick="toggleDiaRuta('ec','mie')">Mié</div>
+      <div class="ruta-chip" id="ec-dia-jue" onclick="toggleDiaRuta('ec','jue')">Jue</div>
+      <div class="ruta-chip" id="ec-dia-vie" onclick="toggleDiaRuta('ec','vie')">Vie</div>
+      <div class="ruta-chip" id="ec-dia-sab" onclick="toggleDiaRuta('ec','sab')">Sáb</div>
+    </div>
     <button class="btn-primary" onclick="saveEditClient()">Guardar cambios</button>
     <button class="btn-primary danger" style="margin-top:12px" onclick="askDeleteClientEdit()">🗑 Eliminar cliente</button>
   </div>
@@ -331,16 +398,26 @@ select.input-field{-webkit-appearance:none;}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── CONSTANTES ──
 const KNOWN_TIPOS = ['Ferretería','Mueblería','Plásticos','Tienda de blancos','Minisuper','Pisos y azulejos'];
 const KNOWN_TERRS = ['Tepetongo, Zac.','Huejúcar, Jal.','Monte Escobedo, Zac.','Mezquitic, Jal.',
   'Huejuquilla el Alto, Jal.','Valparaíso, Zac.','Fresnillo, Zac.','Aguascalientes, Ags.',
-  'Sombrerete, Zac.','Vicente Guerrero, Dgo.','Durango, Dgo.'];
+  'Sombrerete, Zac.','Villanueva, Zac.','Tabasco, Zac.','Vicente Guerrero, Dgo.',
+  'Nombre de Dios, Dgo.','Guadalupe Victoria, Dgo.','Antonio Amaro, Dgo.',
+  'Villa Unión, Dgo.','Fco. I. Madero, Dgo.','Durango, Dgo.'];
+
+const DIAS = ['lun','mar','mie','jue','vie','sab'];
+const DIAS_LABEL = {lun:'Lunes',mar:'Martes',mie:'Miércoles',jue:'Jueves',vie:'Viernes',sab:'Sábado'};
+
+// ── STATE para días de ruta en modals ──
+let ncDias = [], ecDias = [];
 
 const DEFAULT_PRODUCTS = [
-  {id:'p1',name:'Tubo Cortinero',sub:'70 a 120 cm',sku:'S1436',emoji:'📏',price:69.14},
-  {id:'p2',name:'Tubo Cortinero',sub:'110 a 200 cm',sku:'S1434',emoji:'📏',price:91.47},
-  {id:'p3',name:'Tubo Cortinero',sub:'140 a 260 cm',sku:'S3039',emoji:'📏',price:104.76},
+  {id:'p1',name:'Tubo Cortinero',sub:'70 a 120 cm (chico)',sku:'S1436',emoji:'📏',price:69.14},
+  {id:'p2',name:'Tubo Cortinero',sub:'110 a 200 cm (mediano)',sku:'S1434',emoji:'📏',price:91.47},
+  {id:'p3',name:'Tubo Cortinero',sub:'140 a 260 cm (grande)',sku:'S3039',emoji:'📏',price:104.76},
   {id:'p4',name:'Cortina de Baño',sub:'180x180 cm Vinilo',sku:'S1045',emoji:'🚿',price:54.96},
+  // FIX 2: Funda con precio base sugerido, editable en campo
   {id:'p5',name:'Funda para Lavadora',sub:'Vinilo Impermeable Premium',sku:'FUNDA',emoji:'🫧',price:0},
   {id:'p6',name:'Matamoscas Eléctrico',sub:'Con lámpara UV',sku:'W080-2',emoji:'⚡',price:105.74},
   {id:'p7',name:'Microfibra',sub:'40x40 cm',sku:'MA2306',emoji:'🧹',price:10.89},
@@ -351,38 +428,56 @@ const DEFAULT_PRODUCTS = [
 ];
 
 const DEFAULT_CLIENTS = [
-  {id:'c1',name:'Ferretería Valparaíso',contact:'El Ingue',tel:'457 104 0643',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:''},
-  {id:'c2',name:'Ferretería Berumen',contact:'Berumen',tel:'457 100 0988',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Siempre pide precio bajo. Buen volumen de cortineros.'},
-  {id:'c3',name:'Mueblería Ángeles',contact:'Ángeles',tel:'492 289 6854',tipo:'Mueblería',territorio:'Valparaíso, Zac.',dir:'',notas:''},
-  {id:'c4',name:'Bodega Vigamsa',contact:'Don Chuy',tel:'457 948 0921',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'Carr. Laguna Grande 6',notas:'Tiene 2 locales — preguntar si quiere pedido para ambos.'},
-  {id:'c5',name:'Minisuper Los Muchachos',contact:'Daniel',tel:'457 103 1574',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'',notas:''},
-  {id:'c6',name:'Casa Londres',contact:'Sra. Concha',tel:'457 106 9779',tipo:'Plásticos',territorio:'Monte Escobedo, Zac.',dir:'',notas:''},
-  {id:'c7',name:'Ferretería y Mueblería Martínez',contact:'Don Miguel',tel:'457 947 0017',tipo:'Ferretería',territorio:'Huejúcar, Jal.',dir:'Porfirio Díaz 10',notas:''},
-  {id:'c8',name:'Muebles María José',contact:'Sra. María José',tel:'457 102 9078',tipo:'Mueblería',territorio:'Huejúcar, Jal.',dir:'Héroes de la Libertad 5',notas:''},
-  {id:'c9',name:'Pisos, Azulejos y Muebles de Baño',contact:'Mario',tel:'492 294 3314',tipo:'Pisos y azulejos',territorio:'Huejuquilla el Alto, Jal.',dir:'',notas:''},
-  {id:'c10',name:'Plásticos Los Ángeles',contact:'Sra. Verónica',tel:'493 103 0576',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:''},
-  {id:'c11',name:'Plásticos y Prod. de Limpieza',contact:'Iván',tel:'493 109 3245',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:''},
-  {id:'c12',name:'Mueblería Martínez',contact:'Oscar Martínez',tel:'494 130 3515',tipo:'Mueblería',territorio:'Tepetongo, Zac.',dir:'',notas:''},
-  {id:'c13',name:'Ferretería Puerto',contact:'Fernando',tel:'5331089943',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:''},
-  {id:'c14',name:'Ferretería El Martillo',contact:'Enrique',tel:'4341085955',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'Cliente nuevo. Solo compra producto nuevo. Interesado en destapacaños y raqueta.'},
-  {id:'c15',name:'Ferretería y Materiales La General',contact:'Dylan Banicia',tel:'4331091470',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:''},
-  {id:'c16',name:'Ferretería Estrella',contact:'',tel:'4331003225',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:''},
-  // Vicente Guerrero, Dgo.
-  {id:'c17',name:'Ferretería Yelena',contact:'Diego',tel:'6751064730',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:''},
-  {id:'c18',name:'Mueblería El Mary',contact:'Sra. Chayito',tel:'',tipo:'Mueblería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:''},
-  {id:'c19',name:'Centro Ferretero Olvera',contact:'Iván',tel:'6751271252',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:''},
-  {id:'c20',name:'Construrama',contact:'',tel:'6751053660',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'Compras materiales de sala.'},
-  // Nombre de Dios, Dgo.
-  {id:'c21',name:'Ferretería Olvera',contact:'Víctor',tel:'6751066947',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:''},
-  {id:'c22',name:'Ferretería Espinoza',contact:'Jesús Espinoza',tel:'6181007464',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:''},
-  {id:'c23',name:'Ferretería Martínez',contact:'Joel',tel:'6181246129',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:''},
-  // Durango, Dgo.
-  {id:'c24',name:'Blancos La Casa de las Colchas',contact:'Sra. Tere',tel:'6181006709',tipo:'Tienda de blancos',territorio:'Durango, Dgo.',dir:'',notas:''},
-  {id:'c25',name:'Ferretería Coronado',contact:'Sr. Coronado',tel:'6188110372',tipo:'Ferretería',territorio:'Durango, Dgo.',dir:'',notas:''},
-  // Francisco I. Madero, Dgo.
-  {id:'c26',name:'Ferretería Olvera',contact:'Sr. Olvera',tel:'6778830865',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
-  {id:'c27',name:'Ferremateriales',contact:'Rafael',tel:'6778830416',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
-  {id:'c28',name:'Ferretería González',contact:'Nuvia',tel:'6771083714',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:''},
+  {id:'c1',name:'Ferretería Valparaíso',contact:'El Ingue',tel:'457 104 0643',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c2',name:'Ferretería Berumen',contact:'Berumen',tel:'457 100 0988',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Siempre pide precio bajo. Buen volumen de cortineros.',diasRuta:[]},
+  {id:'c3',name:'Mueblería Ángeles',contact:'Ángeles',tel:'492 289 6854',tipo:'Mueblería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c4',name:'Bodega Vigamsa',contact:'Don Chuy',tel:'457 948 0921',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'Carr. Laguna Grande 6',notas:'Tiene 2 locales — preguntar si quiere pedido para ambos.',diasRuta:[]},
+  {id:'c5',name:'Minisuper Los Muchachos',contact:'Daniel',tel:'457 103 1574',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c6',name:'Casa Londres',contact:'Sra. Concha',tel:'457 106 9779',tipo:'Plásticos',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c7',name:'Ferretería y Mueblería Martínez',contact:'Don Miguel',tel:'457 947 0017',tipo:'Ferretería',territorio:'Huejúcar, Jal.',dir:'Porfirio Díaz 10',notas:'',diasRuta:[]},
+  {id:'c8',name:'Muebles María José',contact:'Sra. María José',tel:'457 102 9078',tipo:'Mueblería',territorio:'Huejúcar, Jal.',dir:'Héroes de la Libertad 5',notas:'',diasRuta:[]},
+  {id:'c9',name:'Pisos, Azulejos y Muebles de Baño',contact:'Mario',tel:'492 294 3314',tipo:'Pisos y azulejos',territorio:'Huejuquilla el Alto, Jal.',dir:'',notas:'',diasRuta:[]},
+  {id:'c10',name:'Plásticos Los Ángeles',contact:'Sra. Verónica',tel:'493 103 0576',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c11',name:'Plásticos y Prod. de Limpieza',contact:'Iván',tel:'493 109 3245',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c12',name:'Mueblería Martínez',contact:'Oscar Martínez',tel:'494 130 3515',tipo:'Mueblería',territorio:'Tepetongo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c13',name:'Ferretería Puerto',contact:'Fernando',tel:'5331089943',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c14',name:'Ferretería El Martillo',contact:'Enrique',tel:'4341085955',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'Cliente nuevo. Solo compra producto nuevo. Interesado en destapacaños y raqueta.',diasRuta:[]},
+  {id:'c15',name:'Ferretería y Materiales La General',contact:'Dylan Banicia',tel:'4331091470',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c16',name:'Ferretería Estrella',contact:'',tel:'4331003225',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c17',name:'Ferretería Yelena',contact:'Diego',tel:'6751064730',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c18',name:'Mueblería El Mary',contact:'Sra. Chayito',tel:'',tipo:'Mueblería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c19',name:'Centro Ferretero Olvera',contact:'Iván',tel:'6751271252',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c20',name:'Construrama',contact:'',tel:'6751053660',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c21',name:'Ferretería Olvera',contact:'Víctor',tel:'6751066947',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c22',name:'Ferretería Espinoza',contact:'Jesús Espinoza',tel:'6181007464',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c23',name:'Ferretería Martínez',contact:'Joel',tel:'6181246129',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c24',name:'Blancos La Casa de las Colchas',contact:'Sra. Tere',tel:'6181006709',tipo:'Tienda de blancos',territorio:'Durango, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c25',name:'Ferretería Coronado',contact:'Sr. Coronado',tel:'6188110372',tipo:'Ferretería',territorio:'Durango, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c26',name:'Ferretería Olvera',contact:'Sr. Olvera',tel:'6778830865',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c27',name:'Ferremateriales',contact:'Rafael',tel:'6778830416',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c28',name:'Ferretería González',contact:'Nuvia',tel:'6771083714',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c29',name:'Ferretería Reyna',contact:'',tel:'',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortinas y cortineros. Volver en 1 mes.',diasRuta:[]},
+  {id:'c30',name:'Ferretería Juan Antonio Quintero',contact:'Juan Antonio',tel:'4924013076',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas. Tiene inventario.',diasRuta:[]},
+  {id:'c31',name:'Ferretería La Fe',contact:'',tel:'4991026512',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas. Tiene inventario.',diasRuta:[]},
+  {id:'c32',name:'Ferretería Masa',contact:'',tel:'4991020652',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c33',name:'Plásticos Elena',contact:'Sra. Elena',tel:'4991032115',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'Enfrente del mercado',notas:'Compra cortina baño, funda lavadora.',diasRuta:[]},
+  {id:'c34',name:'Plásticos Tina',contact:'Sra. Tina',tel:'4991033646',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'',notas:'Siempre deja funda lavadora y cortina baño.',diasRuta:[]},
+  {id:'c35',name:'Ferretería García',contact:'',tel:'4639570217',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortinas y cortineros. Tenía proveedor de catálogo.',diasRuta:[]},
+  {id:'c36',name:'Ferretería (pendiente nombre)',contact:'',tel:'4991032240',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Cliente nuevo. Confirmar nombre.',diasRuta:[]},
+  {id:'c37',name:'Ferretería José Jaime',contact:'Rosa Duarte',tel:'4639525519',tipo:'Ferretería',territorio:'Tabasco, Zac.',dir:'',notas:'Compra cortinas y cortineros.',diasRuta:[]},
+  {id:'c38',name:'Mueblería de Kasa',contact:'Sr. Ramiro',tel:'6761049903',tipo:'Mueblería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c39',name:'Plásticos en el Mercado',contact:'Sr. Ramón',tel:'6182734572',tipo:'Plásticos',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c40',name:'Ferretería Mundo',contact:'Isela',tel:'6711177180',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c41',name:'Ferretería Victoria',contact:'Luis Morrero',tel:'6761021465',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c42',name:'Ferretería López',contact:'Alejandro López',tel:'6761030260',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c43',name:'Ferretería Abrí-Sa',contact:'',tel:'6761042967',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c44',name:'Ferretería Monarca',contact:'Laura',tel:'6181266553',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c45',name:'Punto Ferretero',contact:'',tel:'6751048039',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c46',name:'Ferretería Mercado',contact:'Emanuel',tel:'6182169658',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c47',name:'Centro Ferretero Pisos Hogar',contact:'Mau Olvera',tel:'6181128078',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c48',name:'Ferretería IBSA',contact:'Erasmo Samaniego',tel:'6751035949',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c49',name:'Ferretería Don Jorge',contact:'Mónica García',tel:'6751124317',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c50',name:'Ferretería Ismael',contact:'Margarita Garita',tel:'6751127922',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
 ];
 
 const TERR_COLORS = {
@@ -391,6 +486,9 @@ const TERR_COLORS = {
   'Fresnillo, Zac.':'#ec4899','Aguascalientes, Ags.':'#84cc16','Durango, Dgo.':'#f97316',
   'Sombrerete, Zac.':'#a78bfa','Vicente Guerrero, Dgo.':'#fb923c',
   'Nombre de Dios, Dgo.':'#e879f9','Fco. I. Madero, Dgo.':'#34d399',
+  'Villanueva, Zac.':'#38bdf8','Tabasco, Zac.':'#f43f5e',
+  'Guadalupe Victoria, Dgo.':'#facc15','Antonio Amaro, Dgo.':'#4ade80',
+  'Villa Unión, Dgo.':'#c084fc',
 };
 const TYPE_TAGS = {'Ferretería':'tag-ferreteria','Mueblería':'tag-muebleria','Plásticos':'tag-plasticos','Tienda de blancos':'tag-blancos','Minisuper':'tag-minisuper','Pisos y azulejos':'tag-pisos'};
 const TYPE_EMOJI = {'Ferretería':'🔧','Mueblería':'🛋️','Plásticos':'🧃','Tienda de blancos':'🏠','Minisuper':'🏪','Pisos y azulejos':'🪵','Otro':'🏢'};
@@ -398,7 +496,10 @@ const TYPE_EMOJI = {'Ferretería':'🔧','Mueblería':'🛋️','Plásticos':'�
 let products = JSON.parse(localStorage.getItem('altius_products')||'null')||DEFAULT_PRODUCTS;
 let clients  = JSON.parse(localStorage.getItem('altius_clients')||'null')||DEFAULT_CLIENTS;
 let ventas   = JSON.parse(localStorage.getItem('altius_ventas')||'[]');
-let currentClientId=null, quantities={}, customPrices={};
+let currentClientId=null, quantities={}, customPrices={}, rechazos={};
+
+// Migrar clientes sin diasRuta
+clients = clients.map(c=>({diasRuta:[],...c}));
 
 function save(){
   localStorage.setItem('altius_products',JSON.stringify(products));
@@ -406,7 +507,6 @@ function save(){
   localStorage.setItem('altius_ventas',JSON.stringify(ventas));
 }
 
-// ── BUG 1: toggleOtro muestra campo libre cuando seleccionan "Otro" ──
 function toggleOtro(selId,inpId){
   const v=document.getElementById(selId).value;
   const inp=document.getElementById(inpId);
@@ -419,11 +519,29 @@ function resolveVal(selId,inpId){
   return sel.value;
 }
 
+// FIX 4: Toggle días de ruta en modales
+function toggleDiaRuta(prefix, dia){
+  const arr = prefix==='nc'?ncDias:ecDias;
+  const el = document.getElementById(`${prefix}-dia-${dia}`);
+  const idx = arr.indexOf(dia);
+  if(idx===-1){arr.push(dia);el.classList.add('active-day');}
+  else{arr.splice(idx,1);el.classList.remove('active-day');}
+}
+function loadDiasRuta(prefix, diasArr){
+  DIAS.forEach(d=>{
+    const el=document.getElementById(`${prefix}-dia-${d}`);
+    if(!el)return;
+    if(diasArr.includes(d)){el.classList.add('active-day');}
+    else{el.classList.remove('active-day');}
+  });
+}
+
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function showTab(tab){
   if(tab==='home'){renderClients();showScreen('screen-home');}
   if(tab==='historial'){renderHistorial();showScreen('screen-historial');}
   if(tab==='resumen'){renderResumen();showScreen('screen-resumen');}
+  if(tab==='ruta'){renderRuta();showScreen('screen-ruta');}
   if(tab==='admin'){renderAdmin();showScreen('screen-admin');}
 }
 function goBack(){showScreen('screen-home');renderClients();}
@@ -471,12 +589,13 @@ function renderClients(filter=''){
     cls.forEach(c=>{
       const last=[...ventas].reverse().find(v=>v.clientId===c.id);
       const lastStr=last?`Última visita: ${fmtDate(new Date(last.ts))}`:'Sin visitas registradas';
+      const diasBadge=(c.diasRuta&&c.diasRuta.length)?`<span class="ruta-badge">📅 ${c.diasRuta.map(d=>d.charAt(0).toUpperCase()+d.slice(1)).join(', ')}</span> `:'';
       html+=`<div class="client-card" onclick="openVenta('${c.id}')">
         <div class="client-avatar" style="background:linear-gradient(135deg,${color},${color}88)">${TYPE_EMOJI[c.tipo]||'🏢'}</div>
         <div class="client-info">
           <div class="client-name">${c.name}${c.dir?' <span style="font-size:11px">📍</span>':''}</div>
           <div class="client-meta"><span class="tag ${TYPE_TAGS[c.tipo]||'tag-ferreteria'}">${c.tipo||'Otro'}</span>${c.contact?' · '+c.contact:''}</div>
-          <div class="client-meta" style="margin-top:3px">${lastStr}</div>
+          <div class="client-meta" style="margin-top:3px">${diasBadge}${lastStr}</div>
         </div>
         <div style="color:var(--text3);font-size:16px">›</div>
       </div>`;
@@ -487,7 +606,7 @@ function renderClients(filter=''){
 function filterClients(v){renderClients(v);}
 
 function openVenta(clientId){
-  currentClientId=clientId;quantities={};customPrices={};
+  currentClientId=clientId;quantities={};customPrices={};rechazos={};
   const c=clients.find(x=>x.id===clientId);
   document.getElementById('venta-title').textContent=c.name;
   document.getElementById('venta-sub').textContent=c.territorio||'';
@@ -499,17 +618,22 @@ function openVenta(clientId){
     <div style="font-size:13px;color:#93c5fd;margin-top:4px">${c.contact||''}${c.tel?' · '+c.tel:''}</div>`;
   document.getElementById('client-notes-area').innerHTML=c.notas?`<div class="client-notes-banner">⭐ ${c.notas}</div>`:'';
   renderProductsVenta();
+  renderRechazos();
+  // Botón siempre activo para registrar visitas sin venta
+  document.getElementById('btn-guardar').disabled=false;
   showScreen('screen-venta');
 }
 
 function renderProductsVenta(){
   document.getElementById('products-list').innerHTML=products.map(p=>{
     const price=customPrices[p.id]!==undefined?customPrices[p.id]:p.price;
+    // FIX 2: indicador visual de precio variable
+    const priceLabel=price===0?`<span class="precio-variable-pill">precio variable</span>`:'';
     return `<div class="product-row">
       <div class="product-row-top">
         <div class="product-emoji">${p.emoji||'📦'}</div>
         <div class="product-info">
-          <div class="product-name">${p.name}</div>
+          <div class="product-name">${p.name} ${priceLabel}</div>
           <div class="product-sku">${p.sub||''}${p.sku?' · '+p.sku:''}</div>
           <div class="product-price-edit">$<input class="price-input" id="price-${p.id}" type="number" step="0.01" value="${price>0?price.toFixed(2):'0.00'}" onchange="updatePrice('${p.id}',this.value)" onclick="this.select()"><span style="color:var(--text3)">c/u</span></div>
         </div>
@@ -523,16 +647,44 @@ function renderProductsVenta(){
   }).join('');
 }
 
+// FIX 3: Renderizar checkboxes de productos no vendidos
+function renderRechazos(){
+  document.getElementById('rechazos-list').innerHTML=products.map(p=>`
+    <div class="rechazo-row" id="rrow-${p.id}">
+      <div class="rechazo-check" id="rcheck-${p.id}" onclick="toggleRechazo('${p.id}')"></div>
+      <div style="flex:1">
+        <div class="rechazo-label">${p.emoji||'📦'} ${p.name} <span style="color:var(--text3);font-size:11px">${p.sub||''}</span></div>
+        <div id="rreason-wrap-${p.id}" style="display:none">
+          <textarea class="rechazo-reason" id="rreason-${p.id}" placeholder="¿Por qué no compró? (precio, tiene stock, no le interesa...)" rows="2"></textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleRechazo(pid){
+  const check=document.getElementById('rcheck-'+pid);
+  const reasonWrap=document.getElementById('rreason-wrap-'+pid);
+  if(rechazos[pid]){
+    delete rechazos[pid];
+    check.classList.remove('checked');
+    check.textContent='';
+    reasonWrap.style.display='none';
+  } else {
+    rechazos[pid]=true;
+    check.classList.add('checked');
+    check.textContent='✕';
+    reasonWrap.style.display='block';
+    document.getElementById('rreason-'+pid).focus();
+  }
+}
+
 function changeQty(pid,delta){
   quantities[pid]=Math.max(0,(quantities[pid]||0)+delta);
   const el=document.getElementById('qty-'+pid);
   el.textContent=quantities[pid];
   el.className='qty-num'+(quantities[pid]>0?' has-qty':'');
-  document.getElementById('btn-guardar').disabled=!Object.values(quantities).some(q=>q>0);
 }
 function updatePrice(pid,val){customPrices[pid]=parseFloat(val)||0;}
 
-// ── BUG 2: Editar cliente ──
 function openEditClient(){
   const c=clients.find(x=>x.id===currentClientId);if(!c)return;
   document.getElementById('ec-nombre').value=c.name;
@@ -548,6 +700,9 @@ function openEditClient(){
   const terrInp=document.getElementById('ec-territorio-otro');
   if(KNOWN_TERRS.includes(c.territorio)){terrSel.value=c.territorio;terrInp.style.display='none';terrInp.value='';}
   else{terrSel.value='Otro';terrInp.style.display='block';terrInp.value=c.territorio||'';}
+  // FIX 4: cargar días de ruta
+  ecDias=[...(c.diasRuta||[])];
+  loadDiasRuta('ec',ecDias);
   document.getElementById('modal-edit-client').classList.add('open');
 }
 
@@ -563,6 +718,7 @@ function saveEditClient(){
     territorio:resolveVal('ec-territorio','ec-territorio-otro')||'Sin territorio',
     dir:document.getElementById('ec-dir').value.trim(),
     notas:document.getElementById('ec-notas').value.trim(),
+    diasRuta:[...ecDias],
   };
   save();
   closeModal('modal-edit-client');
@@ -580,41 +736,64 @@ function askDeleteClientEdit(){
 }
 function deleteClient(id){clients=clients.filter(c=>c.id!==id);save();closeConfirm();showToast('Cliente eliminado','red');showTab('home');}
 
+// FIX 3: guardar visita aunque no haya ventas (registra rechazos y notas)
 function guardarVenta(){
   const c=clients.find(x=>x.id===currentClientId);
   const items=products.filter(p=>(quantities[p.id]||0)>0).map(p=>{const price=customPrices[p.id]!==undefined?customPrices[p.id]:p.price;return {...p,qty:quantities[p.id],price};});
+  const rechazosArr=products.filter(p=>rechazos[p.id]).map(p=>({id:p.id,name:p.name,sub:p.sub,emoji:p.emoji,reason:(document.getElementById('rreason-'+p.id)||{}).value||''}));
   const total=items.reduce((s,p)=>s+p.price*p.qty,0);
   const notes=document.getElementById('venta-notes').value.trim();
-  let html=`<div class="venta-client-banner" style="margin-bottom:16px"><div style="font-size:18px;font-weight:700">${c.name}</div><div style="font-size:13px;color:#93c5fd;margin-top:4px">${fmtDate(new Date())} · ${c.territorio||''}</div></div><div class="section-label">Productos</div>`;
-  items.forEach(p=>{html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${p.emoji||'📦'} ${p.name} ${p.sub}</div><div style="font-size:12px;color:var(--text2)">${p.qty} pzs × $${p.price.toFixed(2)}</div></div><div style="font-size:15px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace">$${(p.price*p.qty).toFixed(2)}</div></div>`;});
-  html+=`<div class="summary-total-row"><div style="font-size:14px;font-weight:600;color:#6ee7b7">Total de la venta</div><div class="summary-total-amt">$${total.toFixed(2)}</div></div>`;
+  let html=`<div class="venta-client-banner" style="margin-bottom:16px"><div style="font-size:18px;font-weight:700">${c.name}</div><div style="font-size:13px;color:#93c5fd;margin-top:4px">${fmtDate(new Date())} · ${c.territorio||''}</div></div>`;
+  if(items.length){
+    html+=`<div class="section-label">Productos vendidos</div>`;
+    items.forEach(p=>{html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${p.emoji||'📦'} ${p.name} ${p.sub}</div><div style="font-size:12px;color:var(--text2)">${p.qty} pzs × $${p.price.toFixed(2)}</div></div><div style="font-size:15px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace">$${(p.price*p.qty).toFixed(2)}</div></div>`;});
+    html+=`<div class="summary-total-row"><div style="font-size:14px;font-weight:600;color:#6ee7b7">Total de la venta</div><div class="summary-total-amt">$${total.toFixed(2)}</div></div>`;
+  } else {
+    html+=`<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:14px;font-size:14px;color:#f87171;margin-bottom:16px">Sin venta — solo visita registrada</div>`;
+  }
+  if(rechazosArr.length){
+    html+=`<div class="section-label" style="color:#f87171">No compró</div>`;
+    rechazosArr.forEach(r=>{html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${r.emoji||'📦'} ${r.name}</div>${r.reason?`<div style="font-size:12px;color:#f87171">→ ${r.reason}</div>`:''}</div><div style="color:#f87171;font-size:18px">✕</div></div>`;});
+  }
   if(notes)html+=`<div class="section-label">Notas</div><div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:14px;color:var(--text2);line-height:1.6">💬 ${notes}</div>`;
   document.getElementById('summary-content').innerHTML=html;
+  // Guardar rechazos en state para confirmar
+  window._pendingRechazos = rechazosArr;
   showScreen('screen-summary');
 }
 
 function confirmarVenta(){
   const items=products.filter(p=>(quantities[p.id]||0)>0).map(p=>{const price=customPrices[p.id]!==undefined?customPrices[p.id]:p.price;return {id:p.id,name:p.name,sub:p.sub,sku:p.sku,emoji:p.emoji,price,qty:quantities[p.id]};});
-  ventas.push({id:'v'+Date.now(),clientId:currentClientId,ts:Date.now(),items,total:items.reduce((s,p)=>s+p.price*p.qty,0),notes:document.getElementById('venta-notes').value.trim()});
-  save();showToast('✓ Venta guardada');showTab('home');
+  ventas.push({
+    id:'v'+Date.now(),
+    clientId:currentClientId,
+    ts:Date.now(),
+    items,
+    total:items.reduce((s,p)=>s+p.price*p.qty,0),
+    notes:document.getElementById('venta-notes').value.trim(),
+    rechazos:window._pendingRechazos||[],
+  });
+  save();showToast('✓ Visita guardada');showTab('home');
 }
 
 function renderHistorial(){
   const sorted=[...ventas].reverse();
-  document.getElementById('hist-count-label').textContent=`${ventas.length} venta${ventas.length!==1?'s':''} registrada${ventas.length!==1?'s':''}`;
-  if(!sorted.length){document.getElementById('historial-list').innerHTML='<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">Sin ventas todavía.</div></div>';return;}
+  document.getElementById('hist-count-label').textContent=`${ventas.length} visita${ventas.length!==1?'s':''} registrada${ventas.length!==1?'s':''}`;
+  if(!sorted.length){document.getElementById('historial-list').innerHTML='<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">Sin visitas todavía.</div></div>';return;}
   document.getElementById('historial-list').innerHTML=sorted.map(v=>{
     const c=clients.find(x=>x.id===v.clientId)||{name:'Cliente eliminado',territorio:''};
-    const prods=v.items.map(i=>`${i.emoji||'📦'} ${i.name} ×${i.qty}`).join(' · ');
+    const prods=v.items&&v.items.length?v.items.map(i=>`${i.emoji||'📦'} ${i.name} ×${i.qty}`).join(' · '):'Sin venta';
+    const rechStr=v.rechazos&&v.rechazos.length?v.rechazos.map(r=>`✕ ${r.emoji||''}${r.name}${r.reason?' ('+r.reason+')':''}`).join(' · '):'';
     return `<div class="hist-card">
       <div class="hist-card-hdr">
         <div><div class="hist-client">${c.name}</div><div class="hist-date">${fmtDateTime(v.ts)} · ${c.territorio||''}</div></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-          <div class="hist-total">$${v.total.toFixed(2)}</div>
+          <div class="hist-total">${v.total>0?'$'+v.total.toFixed(2):'Visita'}</div>
           <button class="btn-sm red" onclick="askDeleteVenta('${v.id}')">🗑 Eliminar</button>
         </div>
       </div>
       <div class="hist-products">${prods}</div>
+      ${rechStr?`<div class="hist-rechazos">${rechStr}</div>`:''}
       ${v.notes?`<div style="margin-top:8px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);padding-top:8px">💬 ${v.notes}</div>`:''}
     </div>`;
   }).join('');
@@ -622,9 +801,9 @@ function renderHistorial(){
 
 function askDeleteVenta(id){
   const v=ventas.find(x=>x.id===id);const c=clients.find(x=>x.id===v?.clientId);
-  document.getElementById('confirm-title').textContent='¿Eliminar esta venta?';
-  document.getElementById('confirm-sub').textContent=`${c?.name||'Cliente'} · $${v?.total?.toFixed(2)||'0.00'}`;
-  document.getElementById('confirm-ok-btn').onclick=()=>{ventas=ventas.filter(v=>v.id!==id);save();closeConfirm();showToast('Venta eliminada','red');renderHistorial();};
+  document.getElementById('confirm-title').textContent='¿Eliminar esta visita?';
+  document.getElementById('confirm-sub').textContent=`${c?.name||'Cliente'} · ${v?.total>0?'$'+v?.total?.toFixed(2):'Solo visita'}`;
+  document.getElementById('confirm-ok-btn').onclick=()=>{ventas=ventas.filter(v=>v.id!==id);save();closeConfirm();showToast('Visita eliminada','red');renderHistorial();};
   document.getElementById('confirm-overlay').classList.add('open');
 }
 
@@ -636,42 +815,122 @@ function renderResumen(){
   const totalHoy=hoy.reduce((s,v)=>s+v.total,0);
   const totalAll=ventas.reduce((s,v)=>s+v.total,0);
   const prodCount={};
-  hoy.forEach(v=>v.items.forEach(i=>{if(!prodCount[i.name])prodCount[i.name]={qty:0,emoji:i.emoji};prodCount[i.name].qty+=i.qty;}));
+  // FIX 3: Conteo de rechazos del día
+  const rechazosCount={};
+  hoy.forEach(v=>{
+    v.items&&v.items.forEach(i=>{if(!prodCount[i.name])prodCount[i.name]={qty:0,emoji:i.emoji};prodCount[i.name].qty+=i.qty;});
+    v.rechazos&&v.rechazos.forEach(r=>{if(!rechazosCount[r.name])rechazosCount[r.name]={qty:0,emoji:r.emoji,reasons:[]};rechazosCount[r.name].qty++;if(r.reason)rechazosCount[r.name].reasons.push(r.reason);});
+  });
   let html=`<div class="stat-grid">
     <div class="stat-card"><div class="stat-val" style="color:var(--accent2)">$${totalHoy.toFixed(0)}</div><div class="stat-label">Hoy</div></div>
     <div class="stat-card"><div class="stat-val" style="color:var(--accent)">$${totalAll.toFixed(0)}</div><div class="stat-label">Total</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--warn)">${hoy.length}</div><div class="stat-label">Ventas hoy</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--text2)">${ventas.length}</div><div class="stat-label">Total ventas</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--warn)">${hoy.length}</div><div class="stat-label">Visitas hoy</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--text2)">${ventas.length}</div><div class="stat-label">Total visitas</div></div>
   </div>`;
   if(Object.keys(prodCount).length){
-    html+='<div class="section-label">Productos vendidos hoy</div>';
+    html+='<div class="section-label">Vendido hoy</div>';
     Object.entries(prodCount).sort((a,b)=>b[1].qty-a[1].qty).forEach(([name,d])=>{html+=`<div class="summary-item"><div style="font-size:14px;font-weight:500">${d.emoji||'📦'} ${name}</div><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)">${d.qty} pzs</div></div>`;});
+  }
+  // FIX 3: Rechazos del día en resumen
+  if(Object.keys(rechazosCount).length){
+    html+='<div class="section-label" style="color:#f87171">No vendido hoy</div>';
+    Object.entries(rechazosCount).sort((a,b)=>b[1].qty-a[1].qty).forEach(([name,d])=>{
+      const reasons=[...new Set(d.reasons)].filter(Boolean).join(', ');
+      html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${d.emoji||'📦'} ${name}</div>${reasons?`<div style="font-size:11px;color:#f87171">${reasons}</div>`:''}</div><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#f87171">${d.qty}x</div></div>`;
+    });
   }
   if(hoy.length){
     html+='<div class="section-label" style="margin-top:20px">Clientes visitados hoy</div>';
-    hoy.forEach(v=>{const c=clients.find(x=>x.id===v.clientId)||{name:'?',territorio:''};html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:12px;color:var(--text2)">${c.territorio||''}</div></div><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--accent2)">$${v.total.toFixed(2)}</div></div>`;});
+    hoy.forEach(v=>{const c=clients.find(x=>x.id===v.clientId)||{name:'?',territorio:''};html+=`<div class="summary-item"><div><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:12px;color:var(--text2)">${c.territorio||''}</div></div><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:${v.total>0?'var(--accent2)':'var(--text3)'}">  ${v.total>0?'$'+v.total.toFixed(2):'Visita'}</div></div>`;});
     html+=`<div style="margin-top:24px"><button class="btn-primary" style="background:var(--warn);color:#000" onclick="exportWhatsApp()">📤 Exportar resumen por WhatsApp</button></div>`;
   } else {
-    html+='<div class="empty-state"><div class="empty-state-icon">☀️</div><div class="empty-state-text">Sin ventas hoy todavía.<br>¡A vender!</div></div>';
+    html+='<div class="empty-state"><div class="empty-state-icon">☀️</div><div class="empty-state-text">Sin visitas hoy todavía.<br>¡A vender!</div></div>';
   }
   document.getElementById('resumen-body').innerHTML=html;
+}
+
+// FIX 4: Pantalla de Ruta por día de la semana
+function renderRuta(){
+  const body=document.getElementById('ruta-body');
+  const hoy=new Date().getDay(); // 0=Dom,1=Lun...6=Sáb
+  const diaHoyMap={1:'lun',2:'mar',3:'mie',4:'jue',5:'vie',6:'sab',0:null};
+  const diaHoy=diaHoyMap[hoy];
+  let html='';
+  DIAS.forEach(dia=>{
+    const cls=clients.filter(c=>c.diasRuta&&c.diasRuta.includes(dia));
+    const isHoy=dia===diaHoy;
+    html+=`<div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:${isHoy?'var(--accent2)':'var(--text2)'};text-transform:uppercase;letter-spacing:0.8px">${DIAS_LABEL[dia]}</div>
+        ${isHoy?'<span class="ruta-badge">HOY</span>':''}
+        <div style="font-size:12px;color:var(--text3)">${cls.length} cliente${cls.length!==1?'s':''}</div>
+      </div>`;
+    if(cls.length){
+      cls.forEach(c=>{
+        const color=getTerrColor(c.territorio);
+        const last=[...ventas].reverse().find(v=>v.clientId===c.id);
+        const lastStr=last?`Última visita: ${fmtDate(new Date(last.ts))}`:'Sin visitas';
+        html+=`<div class="client-card" onclick="openVenta('${c.id}')">
+          <div class="client-avatar" style="background:linear-gradient(135deg,${color},${color}88)">${TYPE_EMOJI[c.tipo]||'🏢'}</div>
+          <div class="client-info">
+            <div class="client-name">${c.name}</div>
+            <div class="client-meta" style="margin-top:2px"><span class="tag ${TYPE_TAGS[c.tipo]||'tag-ferreteria'}">${c.tipo||'Otro'}</span> · ${c.territorio||''}</div>
+            <div class="client-meta" style="margin-top:2px;color:var(--text3)">${lastStr}</div>
+          </div>
+          <div style="color:var(--text3);font-size:16px">›</div>
+        </div>`;
+      });
+    } else {
+      html+=`<div style="color:var(--text3);font-size:13px;padding:10px 4px">Sin clientes asignados a este día.</div>`;
+    }
+    html+='</div>';
+  });
+  const sinDia=clients.filter(c=>!c.diasRuta||c.diasRuta.length===0);
+  if(sinDia.length){
+    html+=`<div class="section-label" style="color:var(--warn)">Sin día asignado (${sinDia.length})</div>`;
+    sinDia.forEach(c=>{
+      const color=getTerrColor(c.territorio);
+      html+=`<div class="client-card" onclick="openVenta('${c.id}')">
+        <div class="client-avatar" style="background:linear-gradient(135deg,${color},${color}88)">${TYPE_EMOJI[c.tipo]||'🏢'}</div>
+        <div class="client-info">
+          <div class="client-name">${c.name}</div>
+          <div class="client-meta">${c.territorio||''}</div>
+        </div>
+        <div style="color:var(--text3);font-size:16px">›</div>
+      </div>`;
+    });
+  }
+  body.innerHTML=html||'<div class="empty-state"><div class="empty-state-icon">🗓</div><div class="empty-state-text">Edita tus clientes para asignarles días de ruta.</div></div>';
 }
 
 function exportWhatsApp(){
   const todayStr=new Date().toDateString();
   const hoy=ventas.filter(v=>new Date(v.ts).toDateString()===todayStr);
-  if(!hoy.length){showToast('Sin ventas hoy');return;}
+  if(!hoy.length){showToast('Sin visitas hoy');return;}
   const totalHoy=hoy.reduce((s,v)=>s+v.total,0);
   let msg=`*ALTIUS — Reporte del día*\n${fmtDate(new Date())}\n\n`;
-  hoy.forEach(v=>{const c=clients.find(x=>x.id===v.clientId)||{name:'?'};msg+=`📍 *${c.name}*\n`;v.items.forEach(i=>{msg+=`  ${i.emoji||'·'} ${i.name} ${i.sub} × ${i.qty} = $${(i.price*i.qty).toFixed(2)}\n`;});if(v.notes)msg+=`  💬 ${v.notes}\n`;msg+=`  Subtotal: $${v.total.toFixed(2)}\n\n`;});
-  msg+=`*TOTAL DEL DÍA: $${totalHoy.toFixed(2)}*\n${hoy.length} cliente${hoy.length!==1?'s':''} visitado${hoy.length!==1?'s':''}`;
+  hoy.forEach(v=>{
+    const c=clients.find(x=>x.id===v.clientId)||{name:'?'};
+    msg+=`📍 *${c.name}*\n`;
+    if(v.items&&v.items.length){v.items.forEach(i=>{msg+=`  ${i.emoji||'·'} ${i.name} × ${i.qty} = $${(i.price*i.qty).toFixed(2)}\n`;});}
+    else{msg+=`  (sin venta)\n`;}
+    if(v.rechazos&&v.rechazos.length){msg+=`  ❌ No compró: ${v.rechazos.map(r=>r.name+(r.reason?' ('+r.reason+')':'')).join(', ')}\n`;}
+    if(v.notes)msg+=`  💬 ${v.notes}\n`;
+    msg+=`  Subtotal: ${v.total>0?'$'+v.total.toFixed(2):'visita sin venta'}\n\n`;
+  });
+  if(totalHoy>0)msg+=`*TOTAL DEL DÍA: $${totalHoy.toFixed(2)}*\n`;
+  msg+=`${hoy.length} visita${hoy.length!==1?'s':''} registrada${hoy.length!==1?'s':''}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
 function renderAdmin(){
   document.getElementById('admin-products-list').innerHTML=products.map(p=>`<div class="prod-admin-card">
     <div style="font-size:28px">${p.emoji||'📦'}</div>
-    <div class="prod-admin-info"><div class="prod-admin-name">${p.name}</div><div class="prod-admin-sub">${p.sub||''}${p.sku?' · '+p.sku:''}</div><div class="prod-admin-price">$${p.price>0?p.price.toFixed(2):'Precio variable'}</div></div>
+    <div class="prod-admin-info">
+      <div class="prod-admin-name">${p.name}</div>
+      <div class="prod-admin-sub">${p.sub||''}${p.sku?' · '+p.sku:''}</div>
+      <div class="prod-admin-price">${p.price>0?'$'+p.price.toFixed(2):'⚠ Precio variable'}</div>
+    </div>
     <div style="display:flex;gap:8px">
       <button class="btn-sm blue" onclick="openEditProduct('${p.id}')">✏️</button>
       <button class="btn-sm red" onclick="askDeleteProduct('${p.id}')">🗑</button>
@@ -695,11 +954,8 @@ function saveEditProduct(){
   if(!name){showToast('⚠ Escribe el nombre');return;}
   const idx=products.findIndex(x=>x.id===id);if(idx===-1)return;
   products[idx]={...products[idx],
-    name,
-    sub:document.getElementById('ep-sub').value.trim(),
-    sku:document.getElementById('ep-sku').value.trim(),
-    emoji:document.getElementById('ep-emoji').value.trim()||'📦',
-    price:parseFloat(document.getElementById('ep-precio').value)||0,
+    name,sub:document.getElementById('ep-sub').value.trim(),sku:document.getElementById('ep-sku').value.trim(),
+    emoji:document.getElementById('ep-emoji').value.trim()||'📦',price:parseFloat(document.getElementById('ep-precio').value)||0,
   };
   save();closeModal('modal-edit-product');showToast('✓ Producto actualizado');renderAdmin();
 }
@@ -722,12 +978,13 @@ function openAddClient(){
   ['nc-nombre','nc-contacto','nc-tel','nc-dir','nc-notas','nc-tipo-otro','nc-territorio-otro'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('nc-tipo').value='';document.getElementById('nc-territorio').value='';
   document.getElementById('nc-tipo-otro').style.display='none';document.getElementById('nc-territorio-otro').style.display='none';
+  ncDias=[];loadDiasRuta('nc',[]);
   document.getElementById('modal-add-client').classList.add('open');
 }
 function saveNewClient(){
   const name=document.getElementById('nc-nombre').value.trim();
   if(!name){showToast('⚠ Escribe el nombre');return;}
-  clients.push({id:'c'+Date.now(),name,contact:document.getElementById('nc-contacto').value.trim(),tel:document.getElementById('nc-tel').value.trim(),tipo:resolveVal('nc-tipo','nc-tipo-otro')||'Otro',territorio:resolveVal('nc-territorio','nc-territorio-otro')||'Sin territorio',dir:document.getElementById('nc-dir').value.trim(),notas:document.getElementById('nc-notas').value.trim()});
+  clients.push({id:'c'+Date.now(),name,contact:document.getElementById('nc-contacto').value.trim(),tel:document.getElementById('nc-tel').value.trim(),tipo:resolveVal('nc-tipo','nc-tipo-otro')||'Otro',territorio:resolveVal('nc-territorio','nc-territorio-otro')||'Sin territorio',dir:document.getElementById('nc-dir').value.trim(),notas:document.getElementById('nc-notas').value.trim(),diasRuta:[...ncDias]});
   save();closeModal('modal-add-client');showToast('✓ Cliente agregado');renderClients();
 }
 
