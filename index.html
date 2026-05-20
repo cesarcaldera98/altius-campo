@@ -286,7 +286,10 @@ select.input-field{-webkit-appearance:none;}
       <option>Tabasco, Zac.</option><option>Vicente Guerrero, Dgo.</option>
       <option>Nombre de Dios, Dgo.</option><option>Guadalupe Victoria, Dgo.</option>
       <option>Antonio Amaro, Dgo.</option><option>Villa Unión, Dgo.</option>
-      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option><option>Otro</option>
+      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option>
+      <option>Mezquitic, Jal.</option>
+      <option>Pabellón de Arteaga, Ags.</option><option>Rincón de Romos, Ags.</option>
+      <option>Aguascalientes, Ags.</option><option>Calvillo, Ags.</option><option>Otro</option>
     </select>
     <input class="input-field" id="nc-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -332,7 +335,10 @@ select.input-field{-webkit-appearance:none;}
       <option>Tabasco, Zac.</option><option>Vicente Guerrero, Dgo.</option>
       <option>Nombre de Dios, Dgo.</option><option>Guadalupe Victoria, Dgo.</option>
       <option>Antonio Amaro, Dgo.</option><option>Villa Unión, Dgo.</option>
-      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option><option>Otro</option>
+      <option>Fco. I. Madero, Dgo.</option><option>Durango, Dgo.</option>
+      <option>Mezquitic, Jal.</option>
+      <option>Pabellón de Arteaga, Ags.</option><option>Rincón de Romos, Ags.</option>
+      <option>Aguascalientes, Ags.</option><option>Calvillo, Ags.</option><option>Otro</option>
     </select>
     <input class="input-field" id="ec-territorio-otro" placeholder="Escribe el municipio / ciudad..." style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -404,7 +410,9 @@ const KNOWN_TERRS = ['Tepetongo, Zac.','Huejúcar, Jal.','Monte Escobedo, Zac.',
   'Huejuquilla el Alto, Jal.','Valparaíso, Zac.','Fresnillo, Zac.','Aguascalientes, Ags.',
   'Sombrerete, Zac.','Villanueva, Zac.','Tabasco, Zac.','Vicente Guerrero, Dgo.',
   'Nombre de Dios, Dgo.','Guadalupe Victoria, Dgo.','Antonio Amaro, Dgo.',
-  'Villa Unión, Dgo.','Fco. I. Madero, Dgo.','Durango, Dgo.'];
+  'Villa Unión, Dgo.','Fco. I. Madero, Dgo.','Durango, Dgo.',
+  'Pabellón de Arteaga, Ags.','Rincón de Romos, Ags.','Aguascalientes, Ags.',
+  'Calvillo, Ags.','Mezquitic, Jal.'];
 
 const DIAS = ['lun','mar','mie','jue','vie','sab'];
 const DIAS_LABEL = {lun:'Lunes',mar:'Martes',mie:'Miércoles',jue:'Jueves',vie:'Viernes',sab:'Sábado'};
@@ -428,56 +436,85 @@ const DEFAULT_PRODUCTS = [
 ];
 
 const DEFAULT_CLIENTS = [
-  {id:'c1',name:'Ferretería Valparaíso',contact:'El Ingue',tel:'457 104 0643',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c2',name:'Ferretería Berumen',contact:'Berumen',tel:'457 100 0988',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Siempre pide precio bajo. Buen volumen de cortineros.',diasRuta:[]},
-  {id:'c3',name:'Mueblería Ángeles',contact:'Ángeles',tel:'492 289 6854',tipo:'Mueblería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c4',name:'Bodega Vigamsa',contact:'Don Chuy',tel:'457 948 0921',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'Carr. Laguna Grande 6',notas:'Tiene 2 locales — preguntar si quiere pedido para ambos.',diasRuta:[]},
-  {id:'c5',name:'Minisuper Los Muchachos',contact:'Daniel',tel:'457 103 1574',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c6',name:'Casa Londres',contact:'Sra. Concha',tel:'457 106 9779',tipo:'Plásticos',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c7',name:'Ferretería y Mueblería Martínez',contact:'Don Miguel',tel:'457 947 0017',tipo:'Ferretería',territorio:'Huejúcar, Jal.',dir:'Porfirio Díaz 10',notas:'',diasRuta:[]},
-  {id:'c8',name:'Muebles María José',contact:'Sra. María José',tel:'457 102 9078',tipo:'Mueblería',territorio:'Huejúcar, Jal.',dir:'Héroes de la Libertad 5',notas:'',diasRuta:[]},
-  {id:'c9',name:'Pisos, Azulejos y Muebles de Baño',contact:'Mario',tel:'492 294 3314',tipo:'Pisos y azulejos',territorio:'Huejuquilla el Alto, Jal.',dir:'',notas:'',diasRuta:[]},
-  {id:'c10',name:'Plásticos Los Ángeles',contact:'Sra. Verónica',tel:'493 103 0576',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c11',name:'Plásticos y Prod. de Limpieza',contact:'Iván',tel:'493 109 3245',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c12',name:'Mueblería Martínez',contact:'Oscar Martínez',tel:'494 130 3515',tipo:'Mueblería',territorio:'Tepetongo, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c13',name:'Ferretería Puerto',contact:'Fernando',tel:'5331089943',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c14',name:'Ferretería El Martillo',contact:'Enrique',tel:'4341085955',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'Cliente nuevo. Solo compra producto nuevo. Interesado en destapacaños y raqueta.',diasRuta:[]},
-  {id:'c15',name:'Ferretería y Materiales La General',contact:'Dylan Banicia',tel:'4331091470',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c16',name:'Ferretería Estrella',contact:'',tel:'4331003225',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c17',name:'Ferretería Yelena',contact:'Diego',tel:'6751064730',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c18',name:'Mueblería El Mary',contact:'Sra. Chayito',tel:'',tipo:'Mueblería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c19',name:'Centro Ferretero Olvera',contact:'Iván',tel:'6751271252',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c20',name:'Construrama',contact:'',tel:'6751053660',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c21',name:'Ferretería Olvera',contact:'Víctor',tel:'6751066947',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c22',name:'Ferretería Espinoza',contact:'Jesús Espinoza',tel:'6181007464',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c23',name:'Ferretería Martínez',contact:'Joel',tel:'6181246129',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c24',name:'Blancos La Casa de las Colchas',contact:'Sra. Tere',tel:'6181006709',tipo:'Tienda de blancos',territorio:'Durango, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c25',name:'Ferretería Coronado',contact:'Sr. Coronado',tel:'6188110372',tipo:'Ferretería',territorio:'Durango, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c26',name:'Ferretería Olvera',contact:'Sr. Olvera',tel:'6778830865',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c27',name:'Ferremateriales',contact:'Rafael',tel:'6778830416',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c28',name:'Ferretería González',contact:'Nuvia',tel:'6771083714',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c29',name:'Ferretería Reyna',contact:'',tel:'',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortinas y cortineros. Volver en 1 mes.',diasRuta:[]},
-  {id:'c30',name:'Ferretería Juan Antonio Quintero',contact:'Juan Antonio',tel:'4924013076',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas. Tiene inventario.',diasRuta:[]},
-  {id:'c31',name:'Ferretería La Fe',contact:'',tel:'4991026512',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas. Tiene inventario.',diasRuta:[]},
-  {id:'c32',name:'Ferretería Masa',contact:'',tel:'4991020652',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'',diasRuta:[]},
-  {id:'c33',name:'Plásticos Elena',contact:'Sra. Elena',tel:'4991032115',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'Enfrente del mercado',notas:'Compra cortina baño, funda lavadora.',diasRuta:[]},
-  {id:'c34',name:'Plásticos Tina',contact:'Sra. Tina',tel:'4991033646',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'',notas:'Siempre deja funda lavadora y cortina baño.',diasRuta:[]},
-  {id:'c35',name:'Ferretería García',contact:'',tel:'4639570217',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortinas y cortineros. Tenía proveedor de catálogo.',diasRuta:[]},
-  {id:'c36',name:'Ferretería (pendiente nombre)',contact:'',tel:'4991032240',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Cliente nuevo. Confirmar nombre.',diasRuta:[]},
-  {id:'c37',name:'Ferretería José Jaime',contact:'Rosa Duarte',tel:'4639525519',tipo:'Ferretería',territorio:'Tabasco, Zac.',dir:'',notas:'Compra cortinas y cortineros.',diasRuta:[]},
-  {id:'c38',name:'Mueblería de Kasa',contact:'Sr. Ramiro',tel:'6761049903',tipo:'Mueblería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c39',name:'Plásticos en el Mercado',contact:'Sr. Ramón',tel:'6182734572',tipo:'Plásticos',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c40',name:'Ferretería Mundo',contact:'Isela',tel:'6711177180',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c41',name:'Ferretería Victoria',contact:'Luis Morrero',tel:'6761021465',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c42',name:'Ferretería López',contact:'Alejandro López',tel:'6761030260',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c43',name:'Ferretería Abrí-Sa',contact:'',tel:'6761042967',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c44',name:'Ferretería Monarca',contact:'Laura',tel:'6181266553',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c45',name:'Punto Ferretero',contact:'',tel:'6751048039',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c46',name:'Ferretería Mercado',contact:'Emanuel',tel:'6182169658',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c47',name:'Centro Ferretero Pisos Hogar',contact:'Mau Olvera',tel:'6181128078',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c48',name:'Ferretería IBSA',contact:'Erasmo Samaniego',tel:'6751035949',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c49',name:'Ferretería Don Jorge',contact:'Mónica García',tel:'6751124317',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
-  {id:'c50',name:'Ferretería Ismael',contact:'Margarita Garita',tel:'6751127922',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c1',name:'Mueblería Martínez',contact:'Oscar Martínez',tel:'494 130 3515 / 494 941 8243',tipo:'Mueblería',territorio:'Tepetongo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c2',name:'Mueblería (pendiente nombre)',contact:'Manys',tel:'457 104 1470',tipo:'Mueblería',territorio:'Tepetongo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c3',name:'Ferretería y Mueblería Martínez',contact:'Don Miguel',tel:'457 947 0017',tipo:'Ferretería',territorio:'Huejúcar, Jal.',dir:'',notas:'',diasRuta:[]},
+  {id:'c4',name:'Muebles María José',contact:'Sra. María José',tel:'457 102 9078 / 457 947 0627',tipo:'Mueblería',territorio:'Huejúcar, Jal.',dir:'',notas:'',diasRuta:[]},
+  {id:'c5',name:'Mueblería Don Miguel',contact:'Don Miguel',tel:'',tipo:'Mueblería',territorio:'Huejúcar, Jal.',dir:'',notas:'Teléfono pendiente.',diasRuta:[]},
+  {id:'c6',name:'Ferretería Huejúcar',contact:'José Luis',tel:'457 947 0672',tipo:'Ferretería',territorio:'Huejúcar, Jal.',dir:'',notas:'',diasRuta:[]},
+  {id:'c7',name:'Bodega Vigamsa',contact:'Don Chuy',tel:'457 948 0921 / 457 948 0747',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'',notas:'Tiene 2 locales — preguntar si quiere pedido para ambos.',diasRuta:[]},
+  {id:'c8',name:'Minisuper Los Muchachos',contact:'Daniel',tel:'457 103 1574 / 457 948 0219',tipo:'Minisuper',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c9',name:'Casa Londres',contact:'Sra. Concha',tel:'457 106 9779',tipo:'Plásticos',territorio:'Monte Escobedo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c10',name:'Ferretería (pendiente nombre)',contact:'Andrés',tel:'457 103 0156',tipo:'Ferretería',territorio:'Monte Escobedo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c11',name:'Ferretería (pendiente nombre) 2',contact:'Francisco / Otoniel',tel:'492 173 3462 / 457 103 1098',tipo:'Ferretería',territorio:'Monte Escobedo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c12',name:'Mueblería (pendiente nombre)',contact:'Don Güero',tel:'',tipo:'Mueblería',territorio:'Monte Escobedo, Zac.',dir:'',notas:'Teléfono pendiente. Confirmar nombre.',diasRuta:[]},
+  {id:'c13',name:'Mueblería (pendiente nombre) 2',contact:'Enrique Reyes',tel:'457 102 9642',tipo:'Mueblería',territorio:'Mezquitic, Jal.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c14',name:'Ferretería (pendiente nombre) 3',contact:'Misael',tel:'',tipo:'Ferretería',territorio:'Mezquitic, Jal.',dir:'',notas:'Teléfono y nombre pendiente.',diasRuta:[]},
+  {id:'c15',name:'Ferretería (pendiente nombre) 4',contact:'',tel:'',tipo:'Ferretería',territorio:'Mezquitic, Jal.',dir:'',notas:'Datos completos pendiente.',diasRuta:[]},
+  {id:'c16',name:'Pisos, Azulejos y Muebles de Baño',contact:'Mario',tel:'492 294 3314',tipo:'Pisos y azulejos',territorio:'Huejuquilla el Alto, Jal.',dir:'',notas:'',diasRuta:[]},
+  {id:'c17',name:'Ferretería Valparaíso',contact:'El Ingue',tel:'457 104 0643 / 457 102 6818',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c18',name:'Ferretería Berumen',contact:'Berumen',tel:'457 100 0988',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Siempre pide precio bajo. Buen volumen de cortineros.',diasRuta:[]},
+  {id:'c19',name:'Mueblería Ángeles',contact:'Ángeles',tel:'492 289 6854',tipo:'Mueblería',territorio:'Valparaíso, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c20',name:'Ferretería (pendiente nombre) 5',contact:'Oscar',tel:'457 100 1374',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c21',name:'Plásticos (pendiente nombre)',contact:'Fredy',tel:'457 100 8358',tipo:'Plásticos',territorio:'Valparaíso, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c22',name:'Ferretería y Plásticos (pendiente nombre)',contact:'Don Víctor',tel:'493 169 4008',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c23',name:'Ferretería (pendiente nombre) 6',contact:'Pepe Escamilla',tel:'457 100 2927',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c24',name:'Ferretería El Güero',contact:'El Güero',tel:'493 112 3938',tipo:'Ferretería',territorio:'Valparaíso, Zac.',dir:'',notas:'Zona Alamito.',diasRuta:[]},
+  {id:'c25',name:'Plásticos Los Ángeles',contact:'Sra. Verónica',tel:'493 103 0576',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c26',name:'Plásticos y Prod. de Limpieza',contact:'Iván',tel:'493 109 3245',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c27',name:'Ferretería (pendiente nombre) 7',contact:'Fernando Pinedo',tel:'493 114 0523',tipo:'Ferretería',territorio:'Fresnillo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c28',name:'Mueblería (pendiente nombre) 3',contact:'Enrique',tel:'493 125 5894',tipo:'Mueblería',territorio:'Fresnillo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c29',name:'Plásticos (pendiente nombre) 2',contact:'Chuy Bonilla',tel:'493 116 1466 / 493 933 4924',tipo:'Plásticos',territorio:'Fresnillo, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c30',name:'Ferretería Puerto',contact:'Fernando',tel:'533 108 9943',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c31',name:'Ferretería El Martillo',contact:'Enrique',tel:'434 108 5955',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'Solo compra producto nuevo. Interesado en destapacaños y raqueta.',diasRuta:[]},
+  {id:'c32',name:'Ferretería y Materiales La General',contact:'Dylan Banicia',tel:'433 109 1470',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c33',name:'Ferretería Estrella',contact:'',tel:'433 100 3225',tipo:'Ferretería',territorio:'Sombrerete, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c34',name:'Ferretería Reyna',contact:'',tel:'',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortinas y cortineros. Volver en 1 mes.',diasRuta:[]},
+  {id:'c35',name:'Ferretería Juan Antonio Quintero',contact:'Juan Antonio',tel:'492 401 3076',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas.',diasRuta:[]},
+  {id:'c36',name:'Ferretería La Fe',contact:'',tel:'499 102 6512',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Compra cortineros y cortinas.',diasRuta:[]},
+  {id:'c37',name:'Ferretería Masa',contact:'',tel:'499 102 0652',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'',diasRuta:[]},
+  {id:'c38',name:'Plásticos Elena',contact:'Sra. Elena',tel:'499 103 2115',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'',notas:'Enfrente del mercado.',diasRuta:[]},
+  {id:'c39',name:'Plásticos Tina',contact:'Sra. Tina',tel:'499 103 3646',tipo:'Plásticos',territorio:'Villanueva, Zac.',dir:'',notas:'Siempre deja funda lavadora y cortina baño.',diasRuta:[]},
+  {id:'c40',name:'Ferretería García',contact:'',tel:'463 957 0217',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Tenía proveedor de catálogo. Potencial de ampliar.',diasRuta:[]},
+  {id:'c41',name:'Ferretería (pendiente nombre) 8',contact:'',tel:'499 103 2240',tipo:'Ferretería',territorio:'Villanueva, Zac.',dir:'',notas:'Confirmar nombre.',diasRuta:[]},
+  {id:'c42',name:'Ferretería José Jaime',contact:'Rosa Duarte',tel:'463 952 5519',tipo:'Ferretería',territorio:'Tabasco, Zac.',dir:'',notas:'Compra cortinas y cortineros.',diasRuta:[]},
+  {id:'c43',name:'Ferretería Yelena',contact:'Diego',tel:'675 106 4730',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c44',name:'Mueblería El Mary',contact:'Sra. Chayito',tel:'',tipo:'Mueblería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c45',name:'Centro Ferretero Olvera',contact:'Iván',tel:'675 127 1252',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c46',name:'Construrama',contact:'',tel:'675 105 3660',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c47',name:'Ferretería Don Jorge',contact:'Mónica García',tel:'675 112 4317',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c48',name:'Ferretería Ismael',contact:'Margarita Garita',tel:'675 112 7922',tipo:'Ferretería',territorio:'Vicente Guerrero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c49',name:'Ferretería Olvera',contact:'Víctor',tel:'675 106 6947',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c50',name:'Ferretería Espinoza',contact:'Jesús Espinoza',tel:'618 100 7464',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c51',name:'Ferretería Martínez',contact:'Joel',tel:'618 124 6129',tipo:'Ferretería',territorio:'Nombre de Dios, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c52',name:'Mueblería de Kasa',contact:'Sr. Ramiro',tel:'676 104 9903',tipo:'Mueblería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c53',name:'Plásticos en el Mercado',contact:'Sr. Ramón',tel:'618 273 4572',tipo:'Plásticos',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c54',name:'Ferretería Mundo',contact:'Isela',tel:'671 117 7180',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c55',name:'Ferretería Victoria',contact:'Luis Morrero',tel:'676 102 1465',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c56',name:'Ferretería López',contact:'Alejandro López',tel:'676 103 0260',tipo:'Ferretería',territorio:'Guadalupe Victoria, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c57',name:'Ferretería Abrí-Sa',contact:'',tel:'676 104 2967',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c58',name:'Ferretería Monarca',contact:'Laura',tel:'618 126 6553',tipo:'Ferretería',territorio:'Antonio Amaro, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c59',name:'Punto Ferretero',contact:'',tel:'675 104 8039',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c60',name:'Ferretería Mercado',contact:'Emanuel',tel:'618 216 9658',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c61',name:'Centro Ferretero Pisos Hogar',contact:'Mau Olvera',tel:'618 112 8078',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c62',name:'Ferretería IBSA',contact:'Erasmo Samaniego',tel:'675 103 5949',tipo:'Ferretería',territorio:'Villa Unión, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c63',name:'Blancos La Casa de las Colchas',contact:'Sra. Tere',tel:'618 100 6709',tipo:'Tienda de blancos',territorio:'Durango, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c64',name:'Ferretería Coronado',contact:'Sr. Coronado',tel:'618 811 0372',tipo:'Ferretería',territorio:'Durango, Dgo.',dir:'',notas:'Compra directo a Mexasia.',diasRuta:[]},
+  {id:'c65',name:'Ferretería Olvera',contact:'Sr. Olvera',tel:'677 883 0865',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c66',name:'Ferremateriales',contact:'Rafael',tel:'677 883 0416',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c67',name:'Ferretería González',contact:'Nuvia',tel:'677 108 3714',tipo:'Ferretería',territorio:'Fco. I. Madero, Dgo.',dir:'',notas:'',diasRuta:[]},
+  {id:'c68',name:'Negocio (pendiente nombre)',contact:'Yamila',tel:'465 103 9054',tipo:'Pisos y azulejos',territorio:'Pabellón de Arteaga, Ags.',dir:'',notas:'Vende pisos, azulejos y juegos para baño. Confirmar nombre.',diasRuta:[]},
+  {id:'c69',name:'Multicosas',contact:'Mireya',tel:'465 107 0530 / 449 890 9901',tipo:'Plásticos',territorio:'Rincón de Romos, Ags.',dir:'',notas:'Hermana de Elimelec. Cliente importante. Distribuidor.',diasRuta:[]},
+  {id:'c70',name:'Plásticos (distribuidor)',contact:'Esteban',tel:'465 163 1701',tipo:'Plásticos',territorio:'Rincón de Romos, Ags.',dir:'',notas:'Distribuidor.',diasRuta:[]},
+  {id:'c71',name:'Mueblería Victoria',contact:'Victoria',tel:'465 951 0334',tipo:'Mueblería',territorio:'Rincón de Romos, Ags.',dir:'',notas:'',diasRuta:[]},
+  {id:'c72',name:'Plásticos Pepe',contact:'Don Pepe',tel:'449 142 1359 / 449 251 7927',tipo:'Plásticos',territorio:'Aguascalientes, Ags.',dir:'',notas:'',diasRuta:[]},
+  {id:'c73',name:'Productos de Limpieza',contact:'Aarón',tel:'449 546 9223',tipo:'Plásticos',territorio:'Aguascalientes, Ags.',dir:'',notas:'',diasRuta:[]},
+  {id:'c74',name:'Refacciones para Lavadora',contact:'Sr. Antonio',tel:'449 437 8070',tipo:'Ferretería',territorio:'Aguascalientes, Ags.',dir:'',notas:'Solo fundas de lavadora.',diasRuta:[]},
+  {id:'c75',name:'Distribuidora',contact:'Carlos',tel:'449 155 6827',tipo:'Ferretería',territorio:'Aguascalientes, Ags.',dir:'',notas:'Distribuidor.',diasRuta:[]},
+  {id:'c76',name:'Ferretería Fabio',contact:'Fabio',tel:'495 902 3354',tipo:'Ferretería',territorio:'Calvillo, Ags.',dir:'',notas:'',diasRuta:[]},
+  {id:'c77',name:'Plásticos Calvillo',contact:'',tel:'495 111 4153',tipo:'Plásticos',territorio:'Calvillo, Ags.',dir:'',notas:'Confirmar nombre y contacto.',diasRuta:[]},
+  {id:'c78',name:'Ferretería Lupita',contact:'Lupita',tel:'449 433 0073',tipo:'Ferretería',territorio:'Calvillo, Ags.',dir:'',notas:'',diasRuta:[]},
+  {id:'c79',name:'Colchas y Novedades Lety',contact:'Lety',tel:'495 132 3388',tipo:'Tienda de blancos',territorio:'Calvillo, Ags.',dir:'',notas:'',diasRuta:[]},
 ];
 
 const TERR_COLORS = {
